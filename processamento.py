@@ -10,6 +10,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import average_precision_score, accuracy_score, confusion_matrix, classification_report, f1_score, precision_score, recall_score
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import StratifiedShuffleSplit
+from sklearn.model_selection import train_test_split
 from collections import Counter
 import matplotlib.pyplot as plt
 from mlxtend.plotting import plot_confusion_matrix
@@ -112,17 +113,7 @@ def matrix_confusao(validacao_marcacoes, resultado, target_names):
 
 def cria_modelos(treino_dados, treino_marcacoes):
     resultados = {}
-    '''
-    # OneVsRestClassifier - LinearSVC
-    modeloOneVsRest = OneVsRestClassifier(LinearSVC(random_state=0))
-    resultadoOneVsRest = fit_and_predict("OneVsRest", modeloOneVsRest, treino_dados, treino_marcacoes)
-    resultados[resultadoOneVsRest] = modeloOneVsRest
     
-    # OneVsOneClassifier
-    modeloOneVsOne = OneVsOneClassifier(LinearSVC(random_state=0))
-    resultadoOneVsOne = fit_and_predict("OneVsOne", modeloOneVsOne, treino_dados, treino_marcacoes)
-    resultados[resultadoOneVsOne] = modeloOneVsOne
-    '''
     # MultinomialNB
     modeloMultinomial = MultinomialNB(alpha=1.0, fit_prior=True)
     resultadoMultinomial = fit_and_predict("MultinomialNB", modeloMultinomial, treino_dados, treino_marcacoes)
@@ -177,7 +168,15 @@ def divide_dados(tweets, frases):
     #validacao_dados = pd.get_dummies(validacao_dados).values
     
 
-    return treino_dados, treino_marcacoes, validacao_dados, validacao_marcacoes, tamanho_de_treino
+    return treino_dados, treino_marcacoes, validacao_dados, validacao_marcacoes
+
+def divide_dados_sklearn(tweets, frases):
+    marcas = tweets['Sentimento']
+
+    X = frases
+    Y = marcas.values    
+
+    return train_test_split(X, Y, test_size=0.2, random_state=42)
 
 def pre_processamento(dados):
     textosTokenizados = [nltk.tokenize.word_tokenize(frase) for frase in dados]
@@ -268,7 +267,7 @@ def processamento_holdout(tweets, frases):
     print("\n***************************")
     print("PROCESSAMENTO - HOLDOUT")
     print("***************************")
-    treino_dados, treino_marcacoes, validacao_dados, validacao_marcacoes, tamanho_de_treino = divide_dados(tweets, frases)
+    treino_dados, treino_marcacoes, validacao_dados, validacao_marcacoes = divide_dados(tweets, frases)
 
     treino_dados, dicionario = pre_processamento(treino_dados)
     validacao_dados = pre_processamento_validacao(validacao_dados, dicionario)
@@ -330,6 +329,8 @@ def processar(tweets, frases):
     #nltk.download('stopwords')
     #nltk.download('rslp')
     #nltk.download('punkt')
+
+
 
     dados, marcacao, resultados = processamento_holdout(tweets, frases)
     #processamento_kfold(dados, marcacao)

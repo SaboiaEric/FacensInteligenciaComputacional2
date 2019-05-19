@@ -19,6 +19,7 @@ processar(tweets, frases)
 '''
 
 tweets = pd.read_excel('dados.xlsx', sheet_name='DS-PN-ID', encoding='utf-8')
+print(tweets.shape)
 frases = tweets['Text'].str.lower()
 print("Arquivo: dados.xlsx	-  Folha: DS-PN-ID")
 processar(tweets, frases)
