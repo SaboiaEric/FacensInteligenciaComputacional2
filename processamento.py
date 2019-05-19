@@ -145,10 +145,11 @@ def cria_modelos(treino_dados, treino_marcacoes):
     resultadoLogisticRegression = fit_and_predict("LogisticRegression", modeloLogisticRegression, treino_dados, treino_marcacoes)
     resultados[resultadoLogisticRegression] = modeloLogisticRegression
 
+    '''
     modeloSVC = SVC(random_state = 0)
     resultadoSVC = fit_and_predict("SVC RBF Kernel", modeloSVC, treino_dados, treino_marcacoes)
     resultados[resultadoSVC] = modeloSVC
-    
+    '''
 
     #Verifica qual modelo teve a melhor perfomance
     maximo = max(resultados)
@@ -179,7 +180,6 @@ def divide_dados(tweets, frases):
     return treino_dados, treino_marcacoes, validacao_dados, validacao_marcacoes, tamanho_de_treino
 
 def pre_processamento(dados):
-    
     textosTokenizados = [nltk.tokenize.word_tokenize(frase) for frase in dados]
 
     stopwords = nltk.corpus.stopwords.words('portuguese')
