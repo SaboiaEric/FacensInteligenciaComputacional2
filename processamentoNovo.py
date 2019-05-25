@@ -22,16 +22,6 @@ import json
 import pickle
 import csv
 
-def vetorizar_texto(texto, tradutor, stemmer):
-    vetor = [0] * len(tradutor)
-    for palavra in texto:
-        if len(palavra) > 0:
-            raiz = stemmer.stem(palavra)
-            if raiz in tradutor:
-                posicao = tradutor[raiz]
-                vetor[posicao] += 1
-    return vetor
-
 def fit_and_predict(nome, modelo, treino_dados, treino_marcacoes):
     resultado = modelo.fit(treino_dados, treino_marcacoes)
     fit_and_predict_score = str(modelo.score(treino_dados, treino_marcacoes))
@@ -169,7 +159,8 @@ def processamento_holdout(dados):
 
     bow_validacao = pre_processamento_validacao(validacao_dados, vectorizer)
     valida_dados(vencedor, bow_validacao, validacao_marcacoes) 
-    return True
+
+    return resultados
 
 def processamento_kfold(dados, marcacao):
     contador = 1
@@ -197,7 +188,7 @@ def processamento_kfold(dados, marcacao):
 
         contador+=1
 
-def processamento_kfold_2(dados, marcacao, resultados):
+def processamento_cross_val_score(atributos, rotulos, resultados):
     print("\n***************************\n")
     print("PROCESSAMENTO - KFOLD")
     print("\n***************************\n")
@@ -206,13 +197,21 @@ def processamento_kfold_2(dados, marcacao, resultados):
     for iterator in resultados:
         print("GRUPO: "+ str(contador))
         print("Nome: "+ str(resultados[iterator]))        
-        scores = cross_val_score(resultados[iterator], dados, marcacao, cv=k, scoring='f1')
+        scores = cross_val_score(resultados[iterator], atributos, rotulos, cv=k, scoring='f1')
         taxa_de_acerto = np.mean(scores)
         print("Taxa de acerto: " + str(taxa_de_acerto))
         contador+=1
 
 def processar(dados):
-    processamento_holdout(dados)    
-    #processamento_kfold_2(dados, marcacao, resultados)
+    resultados = processamento_holdout(dados)  
+    print("\n***************************\n")
+    print("FINALIZOU O HOLDOUT")
+    print("\n***************************\n")
+    '''
+    vectorizer = CountVectorizer(analyzer = "word")
+    atributos = pre_processamento(dados.Text.values,vectorizer)
+    rotulos = pre_processamento_validacao(dados.Sentimento.values,vectorizer)
+    processamento_cross_val_score(atributos, rotulos, resultados)
+    '''
 
     
